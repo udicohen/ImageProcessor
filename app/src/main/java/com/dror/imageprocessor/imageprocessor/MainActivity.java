@@ -13,6 +13,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         int height = bitmap.getHeight();
         int width = bitmap.getWidth();
         color_pixel = new int[width][][];
+        String colors_in_string = "";
         for(int i=0;i<width-1;i++) {
             color_pixel[i] = new int[height][];
             for (int j=0;j<height-1;j++) {
@@ -53,39 +57,53 @@ public class MainActivity extends AppCompatActivity {
 
                 int[] curr_color = new int[]{R,G,B};
 
+                colors_in_string += "["+R+","+G+","+B+"]";
+
                 color_pixel[i][j] = curr_color;
 
             }
         }
 
-        send_colors_to_strip(color_pixel);
+        send_colors_to_strip(color_pixel, colors_in_string);
     }
+    
 
-    public void send_colors_to_strip(int[][][] color_pixel) {
-        //Todo: send to strip
-
-// Instantiate the RequestQueue.
+    public void send_colors_to_strip(int[][][] color_pixel, String color_in_string) {
+        final int[][][] color_pixel_ = color_pixel;
+        final String color_in_string_ = color_in_string;
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="http://www.google.com";
-
-// Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
+        String url = "http://httpbin.org/post";
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>()
+                {
                     @Override
                     public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
+                        // response
                         String res = response.substring(0,500);
                     }
-                }, new Response.ErrorListener() {
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        VolleyError error_ = error;
+                    }
+                }
+        ) {
             @Override
-            public void onErrorResponse(VolleyError error) {
-//                String res = error.message;
+            protected Map<String, String> getParams()
+            {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("width",  Integer.toString(color_pixel_.length));
+                params.put("height",  Integer.toString(color_pixel_[0].length));
+                params.put("data", color_in_string_);
+
+                return params;
             }
-        });
-
-// Add the request to the RequestQueue.
-        queue.add(stringRequest);
-
+        };
+        queue.add(postRequest);
 
     }
+
 }
