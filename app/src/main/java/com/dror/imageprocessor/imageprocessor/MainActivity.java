@@ -66,13 +66,13 @@ public class MainActivity extends AppCompatActivity {
 
         send_colors_to_strip(color_pixel, colors_in_string);
     }
-    
+
 
     public void send_colors_to_strip(int[][][] color_pixel, String color_in_string) {
         final int[][][] color_pixel_ = color_pixel;
         final String color_in_string_ = color_in_string;
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://httpbin.org/post";
+        String url = "http://localhost:3101/test";
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>()
                 {
