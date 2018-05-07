@@ -42,13 +42,13 @@ public class MainActivity extends AppCompatActivity {
 
     int[][][] color_pixel;
     protected void getPixelData(Bitmap bitmap) {
-        int height = bitmap.getHeight();
-        int width = bitmap.getWidth();
+        int height = 25; //bitmap.getHeight();
+        int width = 12; //bitmap.getWidth();
         color_pixel = new int[width][][];
         String colors_in_string = "";
-        for(int i=0;i<width-1;i++) {
+        for(int i=0;i<width;i++) {
             color_pixel[i] = new int[height][];
-            for (int j=0;j<height-1;j++) {
+            for (int j=0;j<height;j++) {
                 int p = bitmap.getPixel(i,j);
 
                 int R = (p & 0xff0000) >> 16;
@@ -72,14 +72,14 @@ public class MainActivity extends AppCompatActivity {
         final int[][][] color_pixel_ = color_pixel;
         final String color_in_string_ = color_in_string;
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://localhost:3101/test";
+        String url = "http://192.168.1.29:3101/test";
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>()
                 {
                     @Override
                     public void onResponse(String response) {
                         // response
-                        String res = response.substring(0,500);
+                        //String res = response.substring(0,500);
                     }
                 },
                 new Response.ErrorListener()
