@@ -37,13 +37,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Bitmap picture = (Bitmap) data.getExtras().get("data");//this is your bitmap image and now you can do whatever you want with this
-        getPixelData(picture);
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(picture, 30, 25, false);
+        getPixelData(resizedBitmap);
     }
 
     int[][][] color_pixel;
     protected void getPixelData(Bitmap bitmap) {
-        int height = 25; //bitmap.getHeight();
-        int width = 12; //bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int width = bitmap.getWidth();
         color_pixel = new int[width][][];
         String colors_in_string = "";
         for(int i=0;i<width;i++) {
