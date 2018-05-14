@@ -37,43 +37,50 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Bitmap picture = (Bitmap) data.getExtras().get("data");//this is your bitmap image and now you can do whatever you want with this
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(picture, 30, 25, false);
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(picture, 30, 15, false);
         getPixelData(resizedBitmap);
     }
 
-    int[][][] color_pixel;
     protected void getPixelData(Bitmap bitmap) {
         int height = bitmap.getHeight();
         int width = bitmap.getWidth();
-        color_pixel = new int[width][][];
-        String colors_in_string = "";
-        for(int i=0;i<width;i++) {
-            color_pixel[i] = new int[height][];
-            for (int j=0;j<height;j++) {
-                int p = bitmap.getPixel(i,j);
+        String colors_in_string = "[255,255,255][255,255,255][255,255,255][255,255,255][255,255,255][255,255,255][255,255,255][255,255,255]";
+        int length =  height*width + 6 + height + (height+1)/2;
+        for(int i=0;i<height;i++) {
+            String curr_line = "";
+            for (int j=0;j<width;j++) {
+                int p = bitmap.getPixel(j,i);
 
                 int R = (p & 0xff0000) >> 16;
                 int G = (p & 0x00ff00) >> 8;
                 int B = (p & 0x0000ff) >> 0;
 
-                int[] curr_color = new int[]{R,G,B};
-
-                colors_in_string += "["+R+","+G+","+B+"]";
-
-                color_pixel[i][j] = curr_color;
+                if (i%2==0){
+                    curr_line = "["+R+","+G+","+B+"]" + curr_line;
+                }else{
+                    curr_line += "["+R+","+G+","+B+"]";
+                }
 
             }
+            colors_in_string += curr_line;
+
+            colors_in_string += "[255,255,255]";
+            if (i%2!=0){
+                colors_in_string += "[255,255,255]";
+            }
+
         }
 
-        send_colors_to_strip(color_pixel, colors_in_string);
+        send_colors_to_strip(length, colors_in_string);
     }
 
 
-    public void send_colors_to_strip(int[][][] color_pixel, String color_in_string) {
-        final int[][][] color_pixel_ = color_pixel;
+    public void send_colors_to_strip(int length, String color_in_string) {
+        final int length_ = length;
+
         final String color_in_string_ = color_in_string;
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://192.168.1.29:3101/test";
+        String url = "http://10.0.0.100:3101/test";
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>()
                 {
@@ -96,8 +103,7 @@ public class MainActivity extends AppCompatActivity {
             protected Map<String, String> getParams()
             {
                 Map<String, String>  params = new HashMap<String, String>();
-                params.put("width",  Integer.toString(color_pixel_.length));
-                params.put("height",  Integer.toString(color_pixel_[0].length));
+                params.put("length",  Integer.toString(length_));
                 params.put("data", color_in_string_);
 
                 return params;
