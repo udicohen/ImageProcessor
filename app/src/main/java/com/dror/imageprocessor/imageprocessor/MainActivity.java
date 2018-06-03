@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         for(int i=0;i<height;i++) {
             String curr_line = "";
             for (int j=0;j<width;j++) {
-                int p = bitmap.getPixel(j,i);
+                int p = bitmap.getPixel(i,j);
 
                 int R = (p & 0xff0000) >> 16;
                 int G = (p & 0x00ff00) >> 8;
